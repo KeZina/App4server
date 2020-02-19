@@ -16,6 +16,6 @@
     "mongodb": "",
     "mongoose": "",
     "nodemon": "",
-    "ws": ""
+    "socket.io": "^2.3.0"
   }
 }
