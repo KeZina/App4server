@@ -9,7 +9,7 @@ const auth = async (socket, data) => {
         socket.emit('user', {
             type: 'auth',
             auth: verToken.auth,
-            name,
+            name: verToken.name
         })
     } catch(e) {
         console.log(e);

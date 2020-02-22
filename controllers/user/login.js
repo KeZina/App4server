@@ -1,6 +1,6 @@
 const User = require('../../model/User');
 
-const createTempAcc = async (socket, data) => {
+const login = async (socket, data) => {
     try {
         const {name, pass} = data;
         const user = await User.findOne({name});
@@ -32,4 +32,4 @@ const createTempAcc = async (socket, data) => {
     }
 }
 
-module.exports = createTempAcc;
+module.exports = login;

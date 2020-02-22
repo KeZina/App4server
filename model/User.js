@@ -33,7 +33,8 @@ userSchema.methods.addToken = async function() {
             auth: {
                 temp: this.hash ? false : true,
                 perm: this.hash ? true : false
-            }
+            },
+            name: this.name
         },
         config.get('jwtSecret'),
         {
