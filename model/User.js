@@ -18,24 +18,30 @@ const userSchema = new Schema({
     }
 })
 
-userSchema.methods.addToken = () => {
+userSchema.methods.addHash = async function(password) {
+    this.hash = await bcrypt.hash(password, 10);
+}
+
+userSchema.methods.compareHash = async function(password) {
+    return await bcrypt.compare(password, this.hash);
+}
+
+userSchema.methods.addToken = async function() {
     this.token = jwt.sign(
         {
-            _id
+            _id: this._id,
+            auth: {
+                temp: this.hash ? false : true,
+                perm: this.hash ? true : false
+            }
         },
         config.get('jwtSecret'),
         {
             expiresIn: '12h'
         }
-    )
-}
+    );
 
-userSchema.methods.addHash = async password => {
-    this.hash = await bcrypt.hash(password, 10);
-}
-
-userSchema.methods.compareHash = async password => {
-    return await bcrypt.compare(password, this.hash);
+    await this.save();
 }
 
 module.exports = model('User', userSchema)

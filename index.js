@@ -1,4 +1,4 @@
-// add nodemailer to confirm e-mail
+// add nodemailer to confirm e-mail and maybe OAuth too
 const server = require('http').createServer();
 const io = require('socket.io')(server);
 const config = require('config');
@@ -17,6 +17,10 @@ io.on('connection', socket => {
     socket.on('user', data => {
         if(data.type === 'createTempAcc') {
             createTempAcc(socket, data);
+        } else if(data.type === 'createPermAcc') {
+            createPermAcc(socket, data);
+        } else if(data.type === 'login') {
+            login(socket, data);
         }
     })
 

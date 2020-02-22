@@ -5,25 +5,16 @@ const createTempAcc = async (socket, data) => {
         const {name} = data;
         const isNameTaken = await User.findOne({name});
 
-        if(isNameTaken) {
-            socket.emit('user', {
-                type: 'createAcc',
-                auth: {
-                    temp: false,
-                    perm: false
-                },
-                message: 'This name already taken'
-            })
-        } else if(!isNameTaken) {
+        if(!isNameTaken) {
             const user = new User({
                 name,
-                token: ''
+                token: ' '
             })
-            user.addToken();
-            await user.save();
+            
+            await user.addToken();
 
             socket.emit('user', {
-                type: 'createAcc',
+                type: 'auth',
                 auth: {
                     temp: true,
                     perm: false
@@ -31,10 +22,15 @@ const createTempAcc = async (socket, data) => {
                 name,
                 token: user.token
             })
-        }
+        } else if(isNameTaken) throw new Error('this name already taken');
 
     } catch(e) {
         console.log(e);
+
+        socket.emit('user', {
+            type: 'error',
+            message: e.message
+        })
     }
 }
 
