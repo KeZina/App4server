@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const createTempAcc = require('./controllers/user/createTempAcc');
 const createPermAcc = require('./controllers/user/createPermAcc');
 const login = require('./controllers/user/login');
+const logout = require('./controllers/user/logout')
 
 const dbUrl = config.get('dbUrl');
 const port = config.get('port');
@@ -21,6 +22,8 @@ io.on('connection', socket => {
             createPermAcc(socket, data);
         } else if(data.type === 'login') {
             login(socket, data);
+        } else if(data.type === 'logout') {
+            logout(socket, data);
         }
     })
 
@@ -42,7 +45,6 @@ const start = async () => {
         server.listen(port);
 
         console.log(`connection success on port ${port}`)
-
     } catch(e) {
         console.log(`connection error, ${e}`)
         server.close(e);
