@@ -4,6 +4,8 @@ const io = require('socket.io')(server);
 const config = require('config');
 const mongoose = require('mongoose');
 
+const counter = require('./controllers/counter');
+
 const createTempAcc = require('./controllers/user/createTempAcc');
 const createPermAcc = require('./controllers/user/createPermAcc');
 const login = require('./controllers/user/login');
@@ -12,16 +14,17 @@ const auth = require('./controllers/user/auth');
 
 const createRoom = require('.//controllers/room/createRoom');
 const roomList = require('./controllers/room/roomList');
-const roomData = require('./controllers/room/roomData');
+const enterRoom = require('./controllers/room/enterRoom');
 
 const dbUrl = config.get('dbUrl');
 const port = config.get('port');
 
 io.on('connection', socket => {
     console.log('+1 user :)');
+    counter.addSiteUsers();
+    console.log(counter.getSiteUsers())
 
     socket.on('user', data => {
-
         if(data.type === 'createTempAcc') {
             createTempAcc(socket, data);
         } else if(data.type === 'createPermAcc') {
@@ -40,13 +43,15 @@ io.on('connection', socket => {
             createRoom(socket, data);
         } else if (data.type === 'roomList') {
             roomList(socket, data);
-        } else if (data.type === 'roomData') {
-            roomData(socket, data);
+        } else if (data.type === 'enterRoom') {
+            enterRoom(socket, data);
         }
     })
 
     socket.on('disconnect', () => {
         console.log('-1 user :(')
+        counter.removeSiteUsers();
+        console.log(counter.getSiteUsers());
     });
 })
 
