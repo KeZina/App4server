@@ -3,6 +3,7 @@ const server = require('http').createServer();
 const io = require('socket.io')(server);
 const config = require('config');
 const mongoose = require('mongoose');
+const chalk = require('chalk');
 
 const siteUsers = require('./controllers/counter/siteUsers');
 const roomUsers = require('./controllers/counter/roomUsers');
@@ -17,11 +18,13 @@ const createRoom = require('.//controllers/room/createRoom');
 const roomList = require('./controllers/room/roomList');
 const enterRoom = require('./controllers/room/enterRoom');
 
+const inviteUser = require('./controllers/message/inviteUser');
+
 const dbUrl = config.get('dbUrl');
 const port = config.get('port');
 
 io.on('connection', socket => {
-    console.log('+1 user :)');
+    console.log(chalk.bgGreen.red('+1 user :)'));
 
     socket.on('user', data => {
         if(data.type === 'createTempAcc') {
@@ -59,6 +62,7 @@ io.on('connection', socket => {
         })
     })
 
+    // users add to all room, fix this (perhaps problem in io.emit, need emit to specific room)
     socket.on('roomUsers', data => {
         if(data.type === 'addUsers') {
             roomUsers.addUsers(data);
@@ -71,8 +75,14 @@ io.on('connection', socket => {
         })
     })
 
+    socket.on('message', data => {
+        if(data.type === 'inviteUser') {
+            inviteUser(data);
+        }
+    })
+
     socket.on('disconnect', () => {
-        console.log('-1 user :(')
+        console.log(chalk.bgRed.green('-1 user :('));
     });
 })
 
@@ -88,9 +98,9 @@ const start = async () => {
         )
         server.listen(port);
 
-        console.log(`connection success on port ${port}`)
+        console.log(`connection success on port ${port}`);
     } catch(e) {
-        console.log(`connection error, ${e}`)
+        console.log(`connection error, ${e}`);
         server.close(e);
     }
 }

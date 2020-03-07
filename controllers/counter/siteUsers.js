@@ -1,8 +1,8 @@
 const siteUsers = {
     users: [],
     addUsers(socket, {name}) {
-        const isUserSet = this.users.filter(user => user.name === name);
-        if(isUserSet.length === 0) this.users.push({socket, name});
+        const users = this.users.filter(user => user.name !== name);
+        this.users = [...users, {socket, name}];
     },
     removeUsers({name}) {
         const users = this.users.filter(user => user.name !== name);
@@ -11,6 +11,10 @@ const siteUsers = {
     getUsers() {
         const users = this.users.map(user => user.name);
         return users;
+    },
+    getUserSocket({name}) {
+        const user = this.users.filter(user => user.name === name);
+        return user[0].socket;
     }
 }
 
