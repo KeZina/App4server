@@ -33,7 +33,7 @@ const users = {
     },
     getUser({name}) {
         const user = this.users.filter(user => user.name === name);
-        return user;
+        return user[0];
     },
     getUsers() {
         const users = this.users.map(user => user.name);
