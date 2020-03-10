@@ -5,8 +5,7 @@ const config = require('config');
 const mongoose = require('mongoose');
 const chalk = require('chalk');
 
-const siteUsers = require('./controllers/counter/siteUsers');
-const roomUsers = require('./controllers/counter/roomUsers');
+const users = require('./controllers/counter/users');
 
 const createTempAcc = require('./controllers/user/createTempAcc');
 const createPermAcc = require('./controllers/user/createPermAcc');
@@ -50,29 +49,35 @@ io.on('connection', socket => {
         }
     })
 
-    socket.on('siteUsers', data => {
-        if(data.type === 'addUsers') {
-            siteUsers.addUsers(socket, data);
-        } else if(data.type === 'removeUsers') {
-            siteUsers.removeUsers(data);
+    socket.on('users', data => {
+        if(data.type === 'addUser') {
+            users.addUser(socket, data);
+        } else if(data.type === 'updateUser') {
+            users.updateUser(socket, data);
+        } else if(data.type === 'removeUser') {
+            users.removeUser(data);
         }
-        io.emit('counter', {
-            type: 'siteUsers',
-            users: siteUsers.getUsers()
-        })
-    })
 
-    // users add to all room, fix this (perhaps problem in io.emit, need emit to specific room)
-    socket.on('roomUsers', data => {
-        if(data.type === 'addUsers') {
-            roomUsers.addUsers(data);
-        } else if(data.type === 'removeUsers') {
-            roomUsers.removeUsers(data);
+        if(data.goal === 'getSiteUsers') {
+            io.emit('counter', {
+                type: 'siteUsers',
+                users: users.getUsers()
+            })
+        } else if(data.goal === 'getRoomUsers') {
+            io.sockets.in(data.roomUrl).emit('counter', {
+                type: 'roomUsers',
+                users: users.getRoomUsers(data)
+            })
+        } else if(data.goal === 'getAllUsers') {
+            io.emit('counter', {
+                type: 'siteUsers',
+                users: users.getUsers()
+            })
+            io.sockets.in(data.roomUrl).emit('counter', {
+                type: 'roomUsers',
+                users: users.getRoomUsers(data)
+            })
         }
-        io.emit('counter', {
-            type: 'roomUsers',
-            users: roomUsers.getUsers()
-        })
     })
 
     socket.on('message', data => {
@@ -83,6 +88,13 @@ io.on('connection', socket => {
 
     socket.on('disconnect', () => {
         console.log(chalk.bgRed.green('-1 user :('));
+
+        users.removeUser(socket);
+        io.emit('counter', {
+            type: 'siteUsers',
+            users: users.getUsers()
+        })
+        // set setTimeout with clear id, for not to emit if user reload page
     });
 })
 
@@ -98,9 +110,9 @@ const start = async () => {
         )
         server.listen(port);
 
-        console.log(`connection success on port ${port}`);
+        console.log(chalk.bgYellow.black(`connection success on port ${port}`));
     } catch(e) {
-        console.log(`connection error, ${e}`);
+        console.log(chalk.bgRed.black(`connection error, ${e}`));
         server.close(e);
     }
 }

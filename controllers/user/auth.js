@@ -22,10 +22,13 @@ const auth = async (socket, data) => {
         } else if(!user.hash) {
             await User.deleteOne({token});
         }
-        
+
         socket.emit('user', {
-            type: 'error',
-            message: e.message
+            type: 'auth',
+            auth: {
+                temp: false,
+                perm: false
+            }
         })
     }
 }

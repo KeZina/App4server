@@ -1,14 +1,13 @@
-const siteUsers = require('../counter/siteUsers');
+const users = require('../counter/users');
 
 const inviteUser = async data => {
     try {
-        const socket = siteUsers.getUserSocket(data);
+        const user = users.getUser(data);
         
-        if(!socket) throw new Error('no such user');
+        if(!user) throw new Error('no such user');
 
-        socket.emit('message', {
-            type0: 'notification',
-            type1: 'inviteToRoom',
+        user.socket.emit('message', {
+            type: 'inviteToRoom',
             content: null
         })
     } catch(e) {
