@@ -1,15 +1,19 @@
 const Room = require('../../model/Room');
 
-const enterRoom = async (socket, data) => {
+const enterRoom = async (socket, {roomUrl}) => {
     try {
-        const { roomUrl } = data;
         const room = await Room.findById(roomUrl); 
+
+        console.log(room.getMessages())
 
         if(room) {
             socket.emit('room', {
                 type: 'enterRoom',
-                name: room.name,
-                messages: room.messages
+                name: room.name
+            })
+            socket.emit('message', {
+                type: 'roomMessages',
+                messages: room.getMessages()
             })
         } else if(!room) throw new Error('no such room');
     } catch(e) {

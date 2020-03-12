@@ -1,8 +1,7 @@
 const Room = require('../../model/Room');
 
-const createRoom = async (socket, data) => {
+const createRoom = async (socket, {name}) => {
     try {
-        const {name} = data;
         const isNameTaken = await Room.findOne({name});
 
         if(!isNameTaken) {

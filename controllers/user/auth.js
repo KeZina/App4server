@@ -2,9 +2,7 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 const User = require('../../model/User');
 
-const auth = async (socket, data) => {
-    const {token} = data;
-
+const auth = async (socket, {token}) => {
     try {
         const verToken = jwt.verify(token, config.get('jwtSecret'));
 

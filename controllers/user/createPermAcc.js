@@ -1,8 +1,7 @@
 const User = require('../../model/User');
 
-const createTempAcc = async (socket, data) => {
+const createTempAcc = async (socket, {name, password}) => {
     try {
-        const {name, password} = data;
         const isNameTaken = await User.findOne({name});
 
         if(!isNameTaken) {

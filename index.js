@@ -18,12 +18,18 @@ const roomList = require('./controllers/room/roomList');
 const enterRoom = require('./controllers/room/enterRoom');
 
 const inviteUser = require('./controllers/message/inviteUser');
+const createMessage = require('./controllers/message/createMessage');
 
 const dbUrl = config.get('dbUrl');
 const port = config.get('port');
 
 io.on('connection', socket => {
     console.log(chalk.bgGreen.red('+1 user :)'));
+
+    socket.use((packet, next) => {
+        console.log(packet);
+        next();
+    })
 
     socket.on('user', data => {
         if(data.type === 'createTempAcc') {
@@ -80,9 +86,15 @@ io.on('connection', socket => {
         }
     })
 
-    socket.on('message', data => {
+    socket.on('message', async data => {
         if(data.type === 'inviteUser') {
             inviteUser(data);
+        } else if(data.type === 'createMessage') {
+            const messages = await createMessage(data);
+            io.sockets.in(data.roomUrl).emit('message', {
+                type: 'roomMessages',
+                messages
+            })
         }
     })
 

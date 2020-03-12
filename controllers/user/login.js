@@ -1,8 +1,7 @@
 const User = require('../../model/User');
 
-const login = async (socket, data) => {
+const login = async (socket, {name, pass}) => {
     try {
-        const {name, pass} = data;
         const user = await User.findOne({name});
 
         if(user) {
