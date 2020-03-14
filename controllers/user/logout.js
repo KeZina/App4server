@@ -8,16 +8,7 @@ const logout = async (socket, {token}) => {
 
         if(verToken.auth.perm) await User.updateOne({_id: verToken._id}, {token: ' '});
         else if (verToken.auth.temp) await User.deleteOne({_id: verToken._id});
-        else throw new Error('no such user');
-
-        socket.emit('user', {
-            type: 'auth',
-            auth: {
-                temp: false,
-                perm: false
-            },
-            name: null
-        })
+        
     } catch(e) {
         console.log(e);
 

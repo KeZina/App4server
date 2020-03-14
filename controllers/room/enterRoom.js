@@ -4,8 +4,6 @@ const enterRoom = async (socket, {roomUrl}) => {
     try {
         const room = await Room.findById(roomUrl); 
 
-        console.log(room.getMessages())
-
         if(room) {
             socket.emit('room', {
                 type: 'enterRoom',

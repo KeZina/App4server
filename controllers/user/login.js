@@ -16,6 +16,7 @@ const login = async (socket, {name, pass}) => {
                         perm: true
                     },
                     name,
+                    theme: user.theme,
                     token: user.token
                 })
             } else if(!isHash) throw new Error('wrong name or password');

@@ -5,11 +5,13 @@ const User = require('../../model/User');
 const auth = async (socket, {token}) => {
     try {
         const verToken = jwt.verify(token, config.get('jwtSecret'));
+        const user = await User.findById(verToken._id);
 
         socket.emit('user', {
             type: 'auth',
             auth: verToken.auth,
-            name: verToken.name
+            name: verToken.name,
+            theme: user.theme
         })
     } catch(e) {
         console.log(e);

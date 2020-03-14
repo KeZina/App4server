@@ -15,12 +15,14 @@ const createRoom = async (socket, {name}) => {
                 name,
                 roomUrl: room._id
             })
+            socket.emit('message', {
+                type: 'roomMessages',
+                messages: []
+            })
 
         } else if(isNameTaken) throw new Error('such room already exists');
     } catch(e) {
         console.log(e);
-
-
     }
 
 }

@@ -13,6 +13,11 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    theme: {
+        type: String,
+        default: 'boring-blue',
+        required: true
+    },
     hash: {
         type: String
     }
@@ -42,6 +47,11 @@ userSchema.methods.addToken = async function() {
         }
     );
 
+    await this.save();
+}
+
+userSchema.methods.changeTheme = async function(theme) {
+    this.theme = theme;
     await this.save();
 }
 

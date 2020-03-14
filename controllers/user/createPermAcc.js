@@ -20,6 +20,7 @@ const createTempAcc = async (socket, {name, password}) => {
                     perm: true
                 },
                 name,
+                theme: user.theme,
                 token: user.token
             })
         } else if(isNameTaken) throw new Error('this name already taken');

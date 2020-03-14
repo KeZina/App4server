@@ -12,6 +12,7 @@ const createPermAcc = require('./controllers/user/createPermAcc');
 const login = require('./controllers/user/login');
 const logout = require('./controllers/user/logout');
 const auth = require('./controllers/user/auth');
+const setTheme = require('./controllers/user/setTheme');
 
 const createRoom = require('.//controllers/room/createRoom');
 const roomList = require('./controllers/room/roomList');
@@ -42,6 +43,8 @@ io.on('connection', socket => {
             logout(socket, data);
         } else if(data.type === 'auth') {
             auth(socket, data);
+        } else if(data.type === 'setTheme') {
+            setTheme(data);
         }
     })
 
