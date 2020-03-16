@@ -10,17 +10,12 @@ const enterRoom = async (socket, {roomUrl}) => {
                 name: room.name
             })
             socket.emit('message', {
-                type: 'roomMessages',
+                type0: 'roomMessages',
                 messages: room.getMessages()
             })
         } else if(!room) throw new Error('no such room');
     } catch(e) {
         console.log(e);
-
-        socket.emit('room', {
-            type: 'error',
-            message: e.message
-        })
     }
 }
 

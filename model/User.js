@@ -18,6 +18,13 @@ const userSchema = new Schema({
         default: 'boring-blue',
         required: true
     },
+    dateOfRegistry: {
+        type: Number,
+        default: Date.now()
+    },
+    friends: [{
+        type: String
+    }],
     hash: {
         type: String
     }
@@ -47,6 +54,11 @@ userSchema.methods.addToken = async function() {
         }
     );
 
+    await this.save();
+}
+
+userSchema.methods.addFriend = async function(friend) {
+    this.friends = [...this.friends, friend];
     await this.save();
 }
 

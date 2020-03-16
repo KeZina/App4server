@@ -1,13 +1,12 @@
 const Room = require('../../model/Room');
 
-const createMessage = async ({content, sender, roomUrl}) => {
+const createRoomMessage = async (content, currentUser, roomUrl) => {
     try{
         const room = await Room.findById(roomUrl);
 
         await room.addMessage({
             content,
-            sender,
-            date: Date.now()
+            sender: currentUser
         });
 
         return room.getMessages();
@@ -16,4 +15,4 @@ const createMessage = async ({content, sender, roomUrl}) => {
     }
 }
 
-module.exports = createMessage;
+module.exports = createRoomMessage;

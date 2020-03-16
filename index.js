@@ -18,8 +18,10 @@ const createRoom = require('.//controllers/room/createRoom');
 const roomList = require('./controllers/room/roomList');
 const enterRoom = require('./controllers/room/enterRoom');
 
-const inviteUser = require('./controllers/message/inviteUser');
-const createMessage = require('./controllers/message/createMessage');
+const inviteToRoom = require('./controllers/message/inviteToRoom');
+const inviteToFriends = require('./controllers/message/inviteToFriends');
+const addToFriends = require('./controllers/message/addToFriends');
+const createRoomMessage = require('./controllers/message/createRoomMessage');
 
 const dbUrl = config.get('dbUrl');
 const port = config.get('port');
@@ -58,15 +60,14 @@ io.on('connection', socket => {
         }
     })
 
-    socket.on('users', data => {
+    socket.on('users', async data => {
         if(data.type === 'addUser') {
-            users.addUser(socket, data);
+            users.addUser(socket, data.name, data.roomUrl);
         } else if(data.type === 'updateUser') {
-            users.updateUser(socket, data);
+            users.updateUser(socket, data.name, data.reason, data.roomUrl);
         } else if(data.type === 'removeUser') {
-            users.removeUser(data);
+            users.removeUser(data.name);
         }
-
         if(data.goal === 'getSiteUsers') {
             io.emit('counter', {
                 type: 'siteUsers',
@@ -75,7 +76,7 @@ io.on('connection', socket => {
         } else if(data.goal === 'getRoomUsers') {
             io.sockets.in(data.roomUrl).emit('counter', {
                 type: 'roomUsers',
-                users: users.getRoomUsers(data)
+                users: users.getRoomUsers(data.roomUrl)
             })
         } else if(data.goal === 'getAllUsers') {
             io.emit('counter', {
@@ -84,18 +85,29 @@ io.on('connection', socket => {
             })
             io.sockets.in(data.roomUrl).emit('counter', {
                 type: 'roomUsers',
-                users: users.getRoomUsers(data)
+                users: users.getRoomUsers(data.roomUrl)
+            })
+        } else if(data.goal === 'getRegisteredUsers') {
+            socket.emit('counter', {
+                type: 'registeredUsers',
+                users: await users.getRegisteredUsers()
             })
         }
     })
 
     socket.on('message', async data => {
-        if(data.type === 'inviteUser') {
-            inviteUser(data);
-        } else if(data.type === 'createMessage') {
-            const messages = await createMessage(data);
+        if(data.type === 'inviteToRoom') {
+            inviteToRoom(data);
+        } else if(data.type === 'inviteToFriends') {
+            if(data.result === 'accept'){
+                addToFriends(data);
+            } else if(!data.result) {
+                inviteToFriends(data);
+            }
+        } else if(data.type === 'createRoomMessage') {
+            const messages = await createRoomMessage(data.content, data.currentUser, data.roomUrl);
             io.sockets.in(data.roomUrl).emit('message', {
-                type: 'roomMessages',
+                type0: 'roomMessages',
                 messages
             })
         }
