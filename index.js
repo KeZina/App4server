@@ -22,6 +22,7 @@ const inviteToRoom = require('./controllers/message/inviteToRoom');
 const inviteToFriends = require('./controllers/message/inviteToFriends');
 const handleFriends = require('./controllers/message/handleFriends');
 const createRoomMessage = require('./controllers/message/createRoomMessage');
+const createPrivateMessage = require('./controllers/message/createPrivateMessage');
 
 const dbUrl = config.get('dbUrl');
 const port = config.get('port');
@@ -105,7 +106,13 @@ io.on('connection', socket => {
         } else if(data.type === 'createRoomMessage') {
             io.sockets.in(data.roomUrl).emit('message', {
                 type0: 'roomMessages',
-                messages: await createRoomMessage(data.content, data.currentUser, data.roomUrl)
+                messages: await createRoomMessage(data)
+            })
+        } else if(data.type === 'createPrivateMessage') {
+            const target = users.getUser(data.targetUser);
+            target.emit('message', {
+                type0: 'privateMessages',
+                messages: await createPrivateMessage(data)
             })
         }
     })

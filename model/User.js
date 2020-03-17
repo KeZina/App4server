@@ -26,6 +26,10 @@ const userSchema = new Schema({
         type: String
     }],
     messages: [{
+        title: {
+            type: String,
+            required: true
+        },
         content: {
             type: String,
             required: true
@@ -36,7 +40,7 @@ const userSchema = new Schema({
         },
         date: {
             type: Number,
-            default: Date.now()
+            required: true
         }
     }],
     hash: {
@@ -114,9 +118,10 @@ userSchema.methods.getPrettyMessages = function() {
 userSchema.methods.getMessages = function() {
     const {sortedMessages, date} = this.getPrettyMessages();
     const messages = sortedMessages.map((message, index) => {
-        let {_id, content, sender} = message;
+        let {_id, title, content, sender} = message;
         return {
             _id,
+            title,
             content,
             sender,
             date: date[index]
@@ -127,6 +132,7 @@ userSchema.methods.getMessages = function() {
 }
 
 userSchema.methods.addMessage = async function(message) {
+    message.date = Date.now();
     this.messages = [...this.messages, message];
     await this.save();
 }

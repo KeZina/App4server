@@ -1,7 +1,8 @@
 const Room = require('../../model/Room');
 
-const createRoomMessage = async (content, currentUser, roomUrl) => {
+const createRoomMessage = async (data) => {
     try{
+        const {content, currentUser, roomUrl} = data;
         const room = await Room.findById(roomUrl);
 
         await room.addMessage({
