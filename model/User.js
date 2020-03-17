@@ -25,6 +25,20 @@ const userSchema = new Schema({
     friends: [{
         type: String
     }],
+    messages: [{
+        content: {
+            type: String,
+            required: true
+        },
+        sender: {
+            type: String,
+            required: true
+        },
+        date: {
+            type: Number,
+            default: Date.now()
+        }
+    }],
     hash: {
         type: String
     }
@@ -57,8 +71,63 @@ userSchema.methods.addToken = async function() {
     await this.save();
 }
 
-userSchema.methods.addFriend = async function(friend) {
-    this.friends = [...this.friends, friend];
+userSchema.methods.addFriend = async function(targetUser) {
+    this.friends = [...this.friends, targetUser];
+    await this.save();
+}
+
+userSchema.methods.removeFriend = async function(targetUser) {
+    this.friends = this.friends.filter(friend => friend !== targetUser);
+    await this.save();
+}
+
+userSchema.methods.haveSuchFriend = function(targetUser) {
+    const isHaveSuchFriend = this.friends.filter(friend => friend === targetUser);
+    if(isHaveSuchFriend.length !== 0) {
+        return true;
+    } else return false;
+}
+
+userSchema.methods.sortMessages = function(date = 'recent') {
+    if(date === 'recent') {
+        const messages = this.messages;
+        messages.sort((a, b) => b.date - a.date);
+        return messages;
+    } else if(date === 'distant') {
+        const messages = this.messages;
+        messages.sort((a, b) => a.date - b.date);
+        return messages;
+    }
+}
+
+userSchema.methods.getPrettyMessages = function() {
+    const sortedMessages = this.sortMessages();
+    const date = sortedMessages.map(message => {
+        return `${new Date(message.date).toLocaleTimeString()} ${new Date(message.date).toDateString()}`
+    })
+    return {
+        sortedMessages,
+        date
+    }
+}
+
+userSchema.methods.getMessages = function() {
+    const {sortedMessages, date} = this.getPrettyMessages();
+    const messages = sortedMessages.map((message, index) => {
+        let {_id, content, sender} = message;
+        return {
+            _id,
+            content,
+            sender,
+            date: date[index]
+        }
+    })
+
+    return messages;
+}
+
+userSchema.methods.addMessage = async function(message) {
+    this.messages = [...this.messages, message];
     await this.save();
 }
 

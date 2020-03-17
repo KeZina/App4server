@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 const User = require('../../model/User');
 
-const logout = async (socket, {token}) => {
+const logout = async ({token}) => {
     try {
         const verToken = jwt.verify(token, config.get('jwtSecret'));
 
@@ -11,11 +11,6 @@ const logout = async (socket, {token}) => {
         
     } catch(e) {
         console.log(e);
-
-        socket.emit('user', {
-            type: 'error',
-            message: e.message
-        })
     }
 }
 

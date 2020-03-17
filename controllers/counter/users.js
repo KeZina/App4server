@@ -47,16 +47,29 @@ const users = {
 
         return users;
     },
-    async getRegisteredUsers() {
+    async getRegisteredUsers(name) {
         const usersData = await User.find();
-        const users = usersData.map(user => {
-            let {name, dateOfRegistry} = user;
+        const usersOnline = this.getUsers();
+
+        const usersRegistered = usersData.map(user => {
+            const whatsRelation = () => {
+                if(user.haveSuchFriend(name)) {
+                    return 'Friend';
+                } else if(user.name === name) {
+                    return 'You';
+                } else return 'Stranger'
+            }
+
             return {
-                name,
-                dateOfRegistry: new Date(dateOfRegistry).toDateString()
+                name: user.name,
+                relation: whatsRelation(),
+                dateOfRegistry: new Date(user.dateOfRegistry).toDateString(),
+                status: usersOnline.includes(user.name) ? 'Online' : 'Offline',
+                accountType: user.hash ? 'Permanent' : 'Temporary'
             }
         })
-        return users;
+
+        return usersRegistered;
     }
 }
 
