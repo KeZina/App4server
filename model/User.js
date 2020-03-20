@@ -94,40 +94,35 @@ userSchema.methods.haveSuchFriend = function(targetUser) {
 
 userSchema.methods.sortMessages = function(date = 'recent') {
     if(date === 'recent') {
-        const messages = this.messages;
+        const messages = this.messages.map(message => message);
         messages.sort((a, b) => b.date - a.date);
         return messages;
     } else if(date === 'distant') {
-        const messages = this.messages;
+        const messages = this.messages.map(message => message);
         messages.sort((a, b) => a.date - b.date);
         return messages;
     }
 }
 
-userSchema.methods.getPrettyMessages = function() {
-    const sortedMessages = this.sortMessages();
-    const date = sortedMessages.map(message => {
-        return `${new Date(message.date).toLocaleTimeString()} ${new Date(message.date).toDateString()}`
-    })
-    return {
-        sortedMessages,
-        date
-    }
+userSchema.methods.getSenders = function() {
+    const arr = this.messages.map(message => message.sender);
+    const senders = Array.from(new Set(arr));
+
+    return senders
 }
 
-userSchema.methods.getMessages = function() {
-    const {sortedMessages, date} = this.getPrettyMessages();
-    const messages = sortedMessages.map((message, index) => {
-        let {_id, title, content, sender} = message;
+userSchema.methods.getMessages = function(targetUser = null) {
+    const sortedMessages = this.sortMessages();
+
+    const messagesByTargetUser = sortedMessages.filter(message => message.sender === targetUser);
+    const messages = messagesByTargetUser.map(message => {
+        const {title, content} = message;
         return {
-            _id,
             title,
             content,
-            sender,
-            date: date[index]
+            date: `${new Date(message.date).toLocaleTimeString()} ${new Date(message.date).toDateString()}`
         }
     })
-
     return messages;
 }
 
