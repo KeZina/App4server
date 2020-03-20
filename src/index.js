@@ -5,26 +5,26 @@ const config = require('config');
 const mongoose = require('mongoose');
 const chalk = require('chalk');
 
-const users = require('../controllers/counter/users');
+const users = require('./controllers/counter/users');
 
-const createTempAcc = require('../controllers/user/createTempAcc');
-const createPermAcc = require('../controllers/user/createPermAcc');
-const login = require('../controllers/user/login');
-const logout = require('../controllers/user/logout');
-const auth = require('../controllers/user/auth');
-const setTheme = require('../controllers/user/setTheme');
+const createTempAcc = require('./controllers/user/createTempAcc');
+const createPermAcc = require('./controllers/user/createPermAcc');
+const login = require('./controllers/user/login');
+const logout = require('./controllers/user/logout');
+const auth = require('./controllers/user/auth');
+const setTheme = require('./controllers/user/setTheme');
 
-const createRoom = require('../controllers/room/createRoom');
-const roomList = require('../controllers/room/roomList');
-const enterRoom = require('../controllers/room/enterRoom');
+const createRoom = require('./controllers/room/createRoom');
+const roomList = require('./controllers/room/roomList');
+const enterRoom = require('./controllers/room/enterRoom');
 
-const inviteToRoom = require('../controllers/message/inviteToRoom');
-const inviteToFriends = require('../controllers/message/inviteToFriends');
-const handleFriends = require('../controllers/message/handleFriends');
-const createRoomMessage = require('../controllers/message/createRoomMessage');
-const createPrivateMessage = require('../controllers/message/createPrivateMessage');
-const getPrivateMessagesSenders = require('../controllers/message/getPrivateMessagesSenders');
-const getPrivateMessages = require('../controllers/message/getPrivateMessages');
+const inviteToRoom = require('./controllers/message/inviteToRoom');
+const inviteToFriends = require('./controllers/message/inviteToFriends');
+const handleFriends = require('./controllers/message/handleFriends');
+const createRoomMessage = require('./controllers/message/createRoomMessage');
+const createPrivateMessage = require('./controllers/message/createPrivateMessage');
+const getPrivateMessagesSenders = require('./controllers/message/getPrivateMessagesSenders');
+const getPrivateMessages = require('./controllers/message/getPrivateMessages');
 
 const dbUrl = config.get('dbUrl');
 const port = config.get('port');
