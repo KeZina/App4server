@@ -24,35 +24,34 @@ const roomSchema = new Schema({
     ]
 })
 
-interface iMessages {
+interface iMessage {
     content: string;
     sender: string;
     date: number;
 }
 
-interface iPrettyMessages {
+interface iPrettyMessage {
     content: string;
     sender: string;
     date: string;
 }
 
-roomSchema.methods.sortMessages = function(date: 'recent' | 'distant' = 'recent'): Array<iMessages> {
+roomSchema.methods.sortMessages = function(date: 'recent' | 'distant' = 'recent'): Array<iMessage> {
     if(date === 'distant') {
-        const messages: Array<iMessages> = this.messages.map((message: iMessages) => message);
-        messages.sort((a: iMessages, b: iMessages) => a.date - b.date);
+        const messages: Array<iMessage> = this.messages.map((message: iMessage) => message);
+        messages.sort((a: iMessage, b: iMessage) => a.date - b.date);
         return messages;
     } else {
-        const messages: Array<iMessages> = this.messages.map((message: iMessages): iMessages => message);
-        messages.sort((a: iMessages, b: iMessages) => b.date - a.date);
+        const messages: Array<iMessage> = this.messages.map((message: iMessage): iMessage => message);
+        messages.sort((a: iMessage, b: iMessage) => b.date - a.date);
         return messages;
     }
 }
 
-roomSchema.methods.getMessages = function(targetUser: string): Array<iPrettyMessages> {
-    const sortedMessages: Array<iMessages> = this.sortMessages();
+roomSchema.methods.getMessages = function(): Array<iPrettyMessage> {
+    const sortedMessages: Array<iMessage> = this.sortMessages();
 
-    const messagesByTargetUser: Array<iMessages> = sortedMessages.filter((message: iMessages) => message.sender === targetUser);
-    const messages: Array<iPrettyMessages> = messagesByTargetUser.map((message: iMessages): iPrettyMessages => {
+    const messages: Array<iPrettyMessage> = sortedMessages.map((message: iMessage): iPrettyMessage => {
         const {content, sender, date} = message;
         return {
             content,
@@ -63,10 +62,10 @@ roomSchema.methods.getMessages = function(targetUser: string): Array<iPrettyMess
     return messages;
 }
 
-roomSchema.methods.addMessage = async function(message: iMessages): Promise<void> {
+roomSchema.methods.addMessage = async function(message: iMessage): Promise<void> {
     message.date = Date.now();
     this.messages = [...this.messages, message];
     await this.save();
 }
 
-export const Room = model('Room', roomSchema);
+export const Room: any = model('Room', roomSchema);

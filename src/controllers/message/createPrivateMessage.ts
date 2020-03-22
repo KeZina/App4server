@@ -1,4 +1,4 @@
-const User = require('../../model/User');
+const {User} = require('../../model/User');
 
 export const createPrivateMessage = async (content: string, title: string, currentUser: string, targetUser: string): Promise<void> => {
     try{

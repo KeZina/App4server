@@ -1,4 +1,4 @@
-const Room = require('../../model/Room');
+const {Room} = require('../../model/Room');
 
 interface iMessages {
     content: string;

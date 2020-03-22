@@ -153,4 +153,4 @@ userSchema.methods.changeTheme = async function(theme: string): Promise<void> {
     await this.save();
 }
 
-export const User = model('User', userSchema);
+export const User: any = model('User', userSchema);

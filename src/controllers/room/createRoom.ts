@@ -1,4 +1,4 @@
-const Room = require('../../model/Room');
+const {Room} = require('../../model/Room');
 
 export const createRoom = async (socket: any, name: string): Promise<void> => {
     try {

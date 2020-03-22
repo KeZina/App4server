@@ -1,5 +1,5 @@
-const User = require('../../model/User');
-const users = require('../counter/users');
+const {User} = require('../../model/User');
+const users = require('../counter/Users');
 
 export const inviteToFriends = async (currentUser: string, targetUser: string) => {
     try {

@@ -1,8 +1,8 @@
-const User = require('../../model/User');
+const {User} = require('../../model/User');
 
 export const createTempAcc = async (socket: any, name: string): Promise<void> => {
     try {
-        const isNameTaken: any = await User.findOne({name});
+        const isNameTaken = await User.findOne({name});
 
         if(!isNameTaken) {
             const user: any = new User({

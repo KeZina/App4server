@@ -1,4 +1,4 @@
-const Room = require('../../model/Room');
+const {Room} = require('../../model/Room');
 
 export const roomList = async (socket: any): Promise<void> => {
     try {
@@ -18,5 +18,4 @@ export const roomList = async (socket: any): Promise<void> => {
             message: e.message
         })
     }
-
 }

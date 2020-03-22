@@ -5,7 +5,7 @@ const config = require('config');
 const mongoose = require('mongoose');
 const chalk = require('chalk');
 
-const Users = require('./controllers/counter/Users');
+const {users} = require('./controllers/counter/Users');
 // import Users from './controllers/counter/Users';
 
 const {createTempAcc} = require('./controllers/user/createTempAcc');
@@ -46,7 +46,6 @@ interface iUserData {
     password?: string;
     theme?: string;
 }
-
 interface iRoomData {
     type: 
         'createRoom' |
@@ -92,10 +91,10 @@ interface iMessageData {
 io.on('connection', (socket: any): void => {
     console.log(chalk.bgGreen.red('+1 user :)'));
 
-    // socket.use((packet, next) => {
-    //     console.log(packet);
-    //     next();
-    // })
+    socket.use((packet: any, next: any) => {
+        console.log(packet);
+        next();
+    })
 
     socket.on('user', (data: iUserData): void => {
         if(data.type === 'createTempAcc') {
@@ -125,36 +124,36 @@ io.on('connection', (socket: any): void => {
 
     socket.on('users', async (data: iUsersData): Promise<void> => {
         if(data.type === 'createUser') {
-            Users.createUser(socket, data.name, data.roomUrl);
+            users.createUser(socket, data.name, data.roomUrl);
         } else if(data.type === 'updateUser') {
-            Users.updateUser(socket, data.name, data.reason, data.roomUrl);
+            users.updateUser(socket, data.name, data.reason, data.roomUrl);
         } else if(data.type === 'removeUser') {
-            Users.removeUser(data.name);
+            users.removeUser(data.name);
         }
 
         if(data.goal === 'getSiteUsers') {
             io.emit('counter', {
                 type: 'siteUsers',
-                users: Users.getUsers()
+                users: users.getUsers()
             })
         } else if(data.goal === 'getRoomUsers') {
             io.sockets.in(data.roomUrl).emit('counter', {
                 type: 'roomUsers',
-                users: Users.getRoomUsers(data.roomUrl)
+                users: users.getRoomUsers(data.roomUrl)
             })
         } else if(data.goal === 'getRegisteredUsers') {
             socket.emit('counter', {
                 type: 'registeredUsers',
-                users: await Users.getRegisteredUsers(data.name)
+                users: await users.getRegisteredUsers(data.name)
             })
         } else if(data.goal === 'getAllUsers') {
             io.emit('counter', {
                 type: 'siteUsers',
-                users: Users.getUsers()
+                users: users.getUsers()
             })
             io.sockets.in(data.roomUrl).emit('counter', {
                 type: 'roomUsers',
-                users: Users.getRoomUsers(data.roomUrl)
+                users: users.getRoomUsers(data.roomUrl)
             })
         }
     })
@@ -172,7 +171,7 @@ io.on('connection', (socket: any): void => {
                 messages: await createRoomMessage(data.content, data.currentUser, data.roomUrl)
             })
         } else if(data.type === 'createPrivateMessage') {
-            const target = Users.getUser(data.targetUser);
+            const target = users.getUser(data.targetUser);
             await createPrivateMessage(data.content, data.title, data.currentUser, data.targetUser);
             if(target) {
                 target.emit('message', {
@@ -190,11 +189,14 @@ io.on('connection', (socket: any): void => {
     socket.on('disconnect', (): void => {
         console.log(chalk.bgRed.green('-1 user :('));
 
-        Users.removeUser(socket);
-        io.emit('counter', {
-            type: 'siteUsers',
-            users: Users.getUsers()
-        })
+        if(socket.name) {
+            users.removeUser(socket.name);
+            io.emit('counter', {
+                type: 'siteUsers',
+                users: users.getUsers()
+            })
+        }
+
         // set setTimeout with clear id, for not to emit if user reload page
     });
 })

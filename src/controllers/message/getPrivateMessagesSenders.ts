@@ -1,4 +1,4 @@
-const User = require('../../model/User');
+const {User} = require('../../model/User');
 
 export const getPrivateMessagesSenders = async (socket: any, currentUser: string): Promise<void> => {
     try {

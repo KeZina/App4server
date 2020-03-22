@@ -1,5 +1,5 @@
-const users = require('../counter/users');
-const Room = require('../../model/Room')
+const {users} = require('../counter/Users');
+const {Room} = require('../../model/Room');
 
 export const inviteToRoom = async (currentUser: string, targetUser: string, name: string): Promise<void> => {
     try {

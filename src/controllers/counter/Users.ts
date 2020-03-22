@@ -1,4 +1,4 @@
-const User = require('../../model/User');
+const {User} = require('../../model/User');
 
 interface iClassUsers {
     createUser: (socket: any, name: string, roomUrl: string) => void;
@@ -9,7 +9,6 @@ interface iClassUsers {
     getRoomUsers: (roomUrl: string) => Array<string>;
     getRegisteredUsers: (name: string) => Promise<Array<iRegisteredUsers>>;
 }
-
 interface iRegisteredUsers {
     name: string;
     relation: string;
@@ -18,8 +17,8 @@ interface iRegisteredUsers {
     accountType: string;
 }
 
-export default class Users implements iClassUsers {
-    private users: Array<any> = [];
+class Users implements iClassUsers {
+    public users: Array<any> = [];
 
     createUser(socket: any, name: string, roomUrl: string): void {
         const users: any = this.users.filter((user: any): any => user.name !== name);
@@ -100,3 +99,4 @@ export default class Users implements iClassUsers {
         return usersRegistered;
     }
 }
+export const users = new Users();

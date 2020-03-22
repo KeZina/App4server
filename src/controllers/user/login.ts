@@ -1,4 +1,4 @@
-const User = require('../../model/User');
+const {User} = require('../../model/User');
 
 export const login = async (socket: any, name: string, password: string): Promise<void> => {
     try {

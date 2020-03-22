@@ -1,5 +1,5 @@
-const User = require('../../model/User');
-const users = require('../counter/users');
+const {User} = require('../../model/User');
+const users = require('../counter/Users');
 
 export const handleFriends = async (currentUser: string, targetUser: string, reason: string): Promise<void> => {
     try {

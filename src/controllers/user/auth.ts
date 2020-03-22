@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('config');
-const User = require('../../model/User');
+const {User} = require('../../model/User');
 
 export const auth = async (socket: any, token: string): Promise<void> => {
     try {
