@@ -1,11 +1,11 @@
 const User = require('../../model/User');
 
-const login = async (socket, {name, pass}) => {
+export const login = async (socket: any, name: string, password: string): Promise<void> => {
     try {
-        const user = await User.findOne({name});
+        const user: any = await User.findOne({name});
 
         if(user) {
-            const isHash = user.compareHash(pass);
+            const isHash: boolean = user.compareHash(password);
             if(isHash) {
                 await user.addToken();
 
@@ -31,5 +31,3 @@ const login = async (socket, {name, pass}) => {
         })
     }
 }
-
-module.exports = login;

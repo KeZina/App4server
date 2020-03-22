@@ -1,13 +1,12 @@
 const User = require('../../model/User');
 
-const createPrivateMessage = async (data) => {
+export const createPrivateMessage = async (content: string, title: string, currentUser: string, targetUser: string): Promise<void> => {
     try{
-        const {content, title, currentUser, targetUser} = data
         if(currentUser === targetUser) {
             throw new Error(('for what send message to yourself? :)'))
         }
 
-        const user = await User.findOne({name: targetUser});
+        const user: any = await User.findOne({name: targetUser});
         if(!user) {
             throw new Error('no such user');
         }
@@ -18,10 +17,8 @@ const createPrivateMessage = async (data) => {
             sender: currentUser
         });
 
-        return user.getMessages();
+        // return user.getMessages();
     } catch(e) {
         console.log(e);
     }
 }
-
-module.exports = createPrivateMessage;

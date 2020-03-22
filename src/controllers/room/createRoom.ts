@@ -1,11 +1,11 @@
 const Room = require('../../model/Room');
 
-const createRoom = async (socket, {name}) => {
+export const createRoom = async (socket: any, name: string): Promise<void> => {
     try {
-        const isNameTaken = await Room.findOne({name});
+        const isNameTaken: any = await Room.findOne({name});
 
         if(!isNameTaken) {
-            const room = new Room({
+            const room: any = new Room({
                 name
             });
             await room.save();
@@ -26,5 +26,3 @@ const createRoom = async (socket, {name}) => {
     }
 
 }
-
-module.exports = createRoom;

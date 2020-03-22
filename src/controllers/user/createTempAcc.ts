@@ -1,26 +1,24 @@
 const User = require('../../model/User');
 
-const createTempAcc = async (socket, {name, password}) => {
+export const createTempAcc = async (socket: any, name: string): Promise<void> => {
     try {
-        const isNameTaken = await User.findOne({name});
+        const isNameTaken: any = await User.findOne({name});
 
         if(!isNameTaken) {
-            const user = new User({
+            const user: any = new User({
                 name,
-                token: ''
+                token: ' '
             })
             
-            await user.addHash(password);
             await user.addToken();
 
             socket.emit('user', {
                 type: 'auth',
                 auth: {
-                    temp: false,
-                    perm: true
+                    temp: true,
+                    perm: false
                 },
                 name,
-                theme: user.theme,
                 token: user.token
             })
         } else if(isNameTaken) throw new Error('this name already taken');
@@ -34,5 +32,3 @@ const createTempAcc = async (socket, {name, password}) => {
         })
     }
 }
-
-module.exports = createTempAcc;

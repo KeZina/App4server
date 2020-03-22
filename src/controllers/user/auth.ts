@@ -2,10 +2,10 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 const User = require('../../model/User');
 
-const auth = async (socket, {token}) => {
+export const auth = async (socket: any, token: string): Promise<void> => {
     try {
-        const verToken = jwt.verify(token, config.get('jwtSecret'));
-        const user = await User.findById(verToken._id);
+        const verToken: any = jwt.verify(token, config.get('jwtSecret'));
+        const user: any = await User.findById(verToken._id);
 
         socket.emit('user', {
             type: 'auth',
@@ -16,7 +16,7 @@ const auth = async (socket, {token}) => {
     } catch(e) {
         console.log(e);
 
-        const user = await User.findOne({token});
+        const user: any = await User.findOne({token});
         if(user.hash) {
             await User.updateOne({token}, {token: ' '});
         } else if(!user.hash) {
@@ -32,5 +32,3 @@ const auth = async (socket, {token}) => {
         })
     }
 }
-
-module.exports = auth;

@@ -1,13 +1,11 @@
 const User = require('../../model/User');
 
-const setTheme = async ({name, theme}) => {
+export const setTheme = async (name: string, theme: string): Promise<void> => {
     try {
-        const user = await User.findOne({name});
+        const user: any = await User.findOne({name});
         await user.changeTheme(theme);
 
     } catch(e) {
         console.log(e);
     }
 }
-
-module.exports = setTheme;

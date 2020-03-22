@@ -1,37 +1,35 @@
 const User = require('../../model/User');
 const users = require('../counter/users');
 
-const inviteToFriends = async data => {
+export const inviteToFriends = async (currentUser: string, targetUser: string) => {
     try {
-        if(data.target === data.current) {
+        if(targetUser === currentUser) {
             throw new Error('you can`t be friend for yourself :)');
         }
 
-        const target = await User.findOne({name: data.target});
+        const target: any = await User.findOne({name: targetUser});
         if(!target) {
             throw new Error('no such user');
         }
 
-        const targetUserSocket = users.getUser(data.target);
+        const targetUserSocket: any = users.getUser(targetUser);
         if(!targetUserSocket) {
             throw new Error('user is not online, try later');
         }
 
-        const current = await User.findOne({name: data.current});
-        if(current.haveSuchFriend(data.target)) {
+        const current: any = await User.findOne({name: currentUser});
+        if(current.haveSuchFriend(targetUser)) {
             throw new Error('you already friends');
         }
 
         targetUserSocket.emit('message', {
             type0: 'note',
             type1: 'inviteToFriends',
-            content: `User ${data.current} want to be your friend :)`,
-            current: data.current,
-            target: data.target
+            content: `User ${currentUser} want to be your friend :)`,
+            current: currentUser,
+            target: targetUser
         })
     } catch(e) {
         console.log(e);
     }
 }
-
-module.exports = inviteToFriends;

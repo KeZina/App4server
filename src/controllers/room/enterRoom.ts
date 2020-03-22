@@ -1,8 +1,8 @@
 const Room = require('../../model/Room');
 
-const enterRoom = async (socket, {roomUrl}) => {
+export const enterRoom = async (socket: any, roomUrl: string): Promise<void> => {
     try {
-        const room = await Room.findById(roomUrl); 
+        const room: any = await Room.findById(roomUrl); 
 
         if(room) {
             socket.emit('room', {
@@ -18,5 +18,3 @@ const enterRoom = async (socket, {roomUrl}) => {
         console.log(e);
     }
 }
-
-module.exports = enterRoom;

@@ -1,24 +1,24 @@
 const User = require('../../model/User');
 const users = require('../counter/users');
 
-const handleFriends = async data => {
+export const handleFriends = async (currentUser: string, targetUser: string, reason: string): Promise<void> => {
     try {
-        const crnt = data.current;
-        const trgt = data.target;
+        const crnt: string = currentUser;
+        const trgt: string = targetUser;
 
-        const current = await User.findOne({name: crnt});
-        const target = await User.findOne({name: trgt});
+        const current: any = await User.findOne({name: crnt});
+        const target: any = await User.findOne({name: trgt});
 
-        if(data.action === 'add') {
+        if(reason === 'add') {
             await current.addFriend(trgt);
             await target.addFriend(crnt);
-        } else if(data.action === 'remove') {
+        } else if(reason === 'remove') {
             await current.removeFriend(trgt);
             await target.removeFriend(crnt);
         }
         
-        const currentSocket = users.getUser(crnt);
-        const targetSocket = users.getUser(trgt);
+        const currentSocket: any = users.getUser(crnt);
+        const targetSocket: any = users.getUser(trgt);
 
         currentSocket.emit('counter', {
             type: 'registeredUsers',
@@ -34,5 +34,3 @@ const handleFriends = async data => {
         console.log(e);
     }
 }
-
-module.exports = handleFriends;
